@@ -1,0 +1,139 @@
+
+
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-speedometer2"></i> Dashboard</h2>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="bi bi-star-fill text-warning" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2"><%= totalPoints %></h3>
+                    <p class="text-muted mb-0">Total Points</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="bi bi-fire text-danger" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2"><%= activityStreak %></h3>
+                    <p class="text-muted mb-0">Active Days (30d)</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2">
+                        <%= activityStats.find(s => s.status === 'approved')?.count || 0 %>
+                    </h3>
+                    <p class="text-muted mb-0">Approved Activities</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="bi bi-clock text-warning" style="font-size: 2rem;"></i>
+                    <h3 class="mt-2">
+                        <%= activityStats.find(s => s.status === 'pending')?.count || 0 %>
+                    </h3>
+                    <p class="text-muted mb-0">Pending Activities</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Points Breakdown -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Points by Source</h5>
+                </div>
+                <div class="card-body">
+                    <% if (pointsBySource.length === 0) { %>
+                        <p class="text-muted">No points earned yet.</p>
+                    <% } else { %>
+                        <% pointsBySource.forEach(source => { %>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="text-capitalize"><%= source.source_type %></span>
+                                <span class="badge bg-primary"><%= source.total %> points</span>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Monthly Activity</h5>
+                </div>
+                <div class="card-body">
+                    <% if (monthlyActivity.length === 0) { %>
+                        <p class="text-muted">No activity data yet.</p>
+                    <% } else { %>
+                        <% monthlyActivity.forEach(month => { %>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span><%= month.month %></span>
+                                <span class="badge bg-info"><%= month.count %> activities</span>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity History -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Activity History</h5>
+        </div>
+        <div class="card-body">
+            <% if (activityHistory.length === 0) { %>
+                <p class="text-muted">No activities logged yet. <a href="/activities">Start logging activities!</a></p>
+            <% } else { %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Activity</th>
+                                <th>Notes</th>
+                                <th>Status</th>
+                                <th>Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% activityHistory.forEach(activity => { %>
+                                <tr>
+                                    <td><%= new Date(activity.activity_date).toLocaleDateString() %></td>
+                                    <td><%= activity.activity_name %></td>
+                                    <td><%= activity.notes || '-' %></td>
+                                    <td>
+                                        <span class="badge bg-<%= activity.status === 'approved' ? 'success' : activity.status === 'pending' ? 'warning' : 'danger' %>">
+                                            <%= activity.status %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <% if (activity.points_awarded) { %>
+                                            <span class="badge bg-primary">+<%= activity.points_awarded %></span>
+                                        <% } else { %>
+                                            -
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
