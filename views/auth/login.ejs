@@ -1,0 +1,44 @@
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <div class="card shadow auth-card">
+                <div class="card-body p-5">
+                    <div class="text-center mb-4">
+                        <img src="/images/sc-logo-color.png" alt="Stephens College" style="height: 72px; margin-bottom: 16px;">
+                        <h3 class="mt-2" style="color: var(--sc-maroon);">Sign In</h3>
+                        <p class="text-muted">Stephens College Wellness Program</p>
+                    </div>
+
+                    <form action="/auth/login" method="POST">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required placeholder="you@stephens.edu">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-3">
+                        <a href="/auth/forgot-password" class="text-decoration-none">Forgot password?</a>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <div class="alert alert-info alert-persistent mb-0">
+                        <strong>Demo Credentials:</strong><br>
+                        Admin: admin@stephens.edu<br>
+                        User: faculty1@stephens.edu<br>
+                        Password: password123
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

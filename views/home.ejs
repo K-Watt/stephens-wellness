@@ -1,0 +1,132 @@
+
+
+<div class="container mt-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card welcome-card text-white">
+                <div class="card-body d-flex align-items-center justify-content-between flex-wrap">
+                    <div>
+                        <h2 class="mb-1">Welcome back, <%= user.first_name || user.email %>!</h2>
+                        <p class="mb-0" style="opacity: 0.9;">Track your wellness journey and earn rewards</p>
+                    </div>
+                    <div class="text-end">
+                        <div style="font-size: 2.5rem; font-weight: bold;"><%= totalPoints %></div>
+                        <div style="color: var(--sc-gold-light); font-weight: 500;"><i class="bi bi-star-fill"></i> Total Points</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Announcements -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-megaphone"></i> Announcements</h5>
+                </div>
+                <div class="card-body">
+                    <% if (announcements.length === 0) { %>
+                        <p class="text-muted">No announcements at this time.</p>
+                    <% } else { %>
+                        <% announcements.forEach(announcement => { %>
+                            <div class="mb-3 pb-3 border-bottom">
+                                <h6><%= announcement.title %></h6>
+                                <p class="mb-1"><%= announcement.body %></p>
+                                <small class="text-muted">
+                                    Posted <%= new Date(announcement.created_at).toLocaleDateString() %>
+                                </small>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                </div>
+            </div>
+
+            <!-- Recent Activities -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-activity"></i> Recent Activities</h5>
+                </div>
+                <div class="card-body">
+                    <% if (recentActivities.length === 0) { %>
+                        <p class="text-muted">No activities logged yet. <a href="/activities">Log your first activity!</a></p>
+                    <% } else { %>
+                        <div class="list-group list-group-flush">
+                            <% recentActivities.forEach(activity => { %>
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong><%= activity.activity_name %></strong>
+                                            <br>
+                                            <small class="text-muted">
+                                                <%= new Date(activity.activity_date).toLocaleDateString() %>
+                                            </small>
+                                        </div>
+                                        <span class="badge bg-<%= activity.status === 'approved' ? 'success' : activity.status === 'pending' ? 'warning' : 'danger' %>">
+                                            <%= activity.status %>
+                                        </span>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Upcoming Events -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Upcoming Events</h5>
+                </div>
+                <div class="card-body">
+                    <% if (upcomingEvents.length === 0) { %>
+                        <p class="text-muted">No upcoming events.</p>
+                    <% } else { %>
+                        <% upcomingEvents.forEach(event => { %>
+                            <div class="mb-3">
+                                <h6><%= event.title %></h6>
+                                <p class="mb-1 small">
+                                    <i class="bi bi-calendar"></i>
+                                    <%= new Date(event.start_datetime).toLocaleString() %>
+                                </p>
+                                <p class="mb-1 small">
+                                    <i class="bi bi-geo-alt"></i> <%= event.location %>
+                                </p>
+                                <% if (event.user_rsvp_status === 'going') { %>
+                                    <span class="badge bg-success">You're going!</span>
+                                <% } else { %>
+                                    <a href="/events" class="btn btn-sm btn-outline-primary">View Details</a>
+                                <% } %>
+                            </div>
+                            <hr>
+                        <% }); %>
+                    <% } %>
+                    <a href="/events" class="btn btn-primary btn-sm w-100">View All Events</a>
+                </div>
+            </div>
+
+            <!-- Recent Points -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-star"></i> Recent Points</h5>
+                </div>
+                <div class="card-body">
+                    <% if (recentPoints.length === 0) { %>
+                        <p class="text-muted">No points earned yet.</p>
+                    <% } else { %>
+                        <% recentPoints.forEach(point => { %>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <small><%= point.reason %></small>
+                                <span class="badge bg-primary">+<%= point.points %></span>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
