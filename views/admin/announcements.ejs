@@ -1,0 +1,116 @@
+
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-megaphone"></i> Manage Announcements</h2>
+        <a href="/admin" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Admin
+        </a>
+    </div>
+
+    <!-- Create Announcement Form -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Create New Announcement</h5>
+        </div>
+        <div class="card-body">
+            <form action="/admin/announcements/create" method="POST">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="body" class="form-label">Message</label>
+                    <textarea class="form-control" id="body" name="body" rows="4" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="publish_start" class="form-label">Publish Start Date</label>
+                        <input type="datetime-local" class="form-control" id="publish_start" name="publish_start" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="publish_end" class="form-label">Publish End Date (optional)</label>
+                        <input type="datetime-local" class="form-control" id="publish_end" name="publish_end">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create Announcement
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Announcements List -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">All Announcements</h5>
+        </div>
+        <div class="card-body">
+            <% if (announcements.length === 0) { %>
+                <p class="text-muted">No announcements created yet.</p>
+            <% } else { %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Message</th>
+                                <th>Publish Dates</th>
+                                <th>Created By</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% announcements.forEach(announcement => { 
+                                const now = new Date();
+                                const start = new Date(announcement.publish_start);
+                                const end = announcement.publish_end ? new Date(announcement.publish_end) : null;
+                                const isActive = now >= start && (!end || now <= end);
+                            %>
+                                <tr>
+                                    <td>
+                                        <%= announcement.title %>
+                                        <% if (isActive) { %>
+                                            <span class="badge bg-success ms-2">Active</span>
+                                        <% } %>
+                                    </td>
+                                    <td><%= announcement.body.substring(0, 100) %><%= announcement.body.length > 100 ? '...' : '' %></td>
+                                    <td>
+                                        <small>
+                                            Start: <%= new Date(announcement.publish_start).toLocaleDateString() %><br>
+                                            End: <%= announcement.publish_end ? new Date(announcement.publish_end).toLocaleDateString() : 'No end date' %>
+                                        </small>
+                                    </td>
+                                    <td><%= announcement.created_by_email %></td>
+                                    <td>
+                                        <form action="/admin/announcements/delete/<%= announcement.id %>" method="POST" 
+                                              onsubmit="return confirm('Are you sure you want to delete this announcement?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set default publish start to now
+document.addEventListener('DOMContentLoaded', function() {
+    const publishStart = document.getElementById('publish_start');
+    if (publishStart && !publishStart.value) {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        publishStart.value = now.toISOString().slice(0, 16);
+    }
+});
+</script>

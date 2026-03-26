@@ -1,0 +1,156 @@
+
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-calendar-event"></i> Manage Events</h2>
+        <a href="/admin" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Admin
+        </a>
+    </div>
+
+    <!-- Create Event Form -->
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Create New Event</h5>
+        </div>
+        <div class="card-body">
+            <form action="/admin/events/create" method="POST">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="title" class="form-label">Event Title</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="location" class="form-label">Location</label>
+                        <input type="text" class="form-control" id="location" name="location" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="start_datetime" class="form-label">Start Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="start_datetime" name="start_datetime" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="end_datetime" class="form-label">End Date & Time</label>
+                        <input type="datetime-local" class="form-control" id="end_datetime" name="end_datetime" required>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="capacity" class="form-label">Capacity (optional)</label>
+                        <input type="number" class="form-control" id="capacity" name="capacity" min="1">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create Event
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Events List -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">All Events</h5>
+        </div>
+        <div class="card-body">
+            <% if (events.length === 0) { %>
+                <p class="text-muted">No events created yet.</p>
+            <% } else { %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Date & Time</th>
+                                <th>Location</th>
+                                <th>RSVPs</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% events.forEach(event => { %>
+                                <tr>
+                                    <td><%= event.title %></td>
+                                    <td><%= new Date(event.start_datetime).toLocaleString() %></td>
+                                    <td><%= event.location %></td>
+                                    <td>
+                                        <%= event.rsvp_count %><% if (event.capacity) { %> / <%= event.capacity %><% } %>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-<%= event.status === 'active' ? 'success' : 'secondary' %>">
+                                            <%= event.status %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <% if (event.status === 'active') { %>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                    data-bs-toggle="modal" data-bs-target="#editModal<%= event.id %>">
+                                                Edit
+                                            </button>
+                                            <form action="/admin/events/cancel/<%= event.id %>" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-sm btn-outline-danger">Cancel</button>
+                                            </form>
+                                        <% } %>
+                                    </td>
+                                </tr>
+
+                                <!-- Edit Modal -->
+                                <div class="modal fade" id="editModal<%= event.id %>" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Edit Event</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form action="/admin/events/edit/<%= event.id %>" method="POST">
+                                                <div class="modal-body">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Title</label>
+                                                        <input type="text" class="form-control" name="title" value="<%= event.title %>" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Description</label>
+                                                        <textarea class="form-control" name="description" rows="3" required><%= event.description %></textarea>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Location</label>
+                                                        <input type="text" class="form-control" name="location" value="<%= event.location %>" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Start DateTime</label>
+                                                        <input type="datetime-local" class="form-control" name="start_datetime" 
+                                                               value="<%= new Date(event.start_datetime).toISOString().slice(0,16) %>" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">End DateTime</label>
+                                                        <input type="datetime-local" class="form-control" name="end_datetime" 
+                                                               value="<%= new Date(event.end_datetime).toISOString().slice(0,16) %>" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Capacity</label>
+                                                        <input type="number" class="form-control" name="capacity" value="<%= event.capacity || '' %>">
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            <% } %>
+        </div>
+    </div>
+</div>

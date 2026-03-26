@@ -1,0 +1,166 @@
+
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-check-circle"></i> Manage Activities</h2>
+        <a href="/admin" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Admin
+        </a>
+    </div>
+
+    <!-- Filter Tabs -->
+    <ul class="nav nav-tabs mb-4">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#pending">
+                Pending (<%= activities.filter(a => a.status === 'pending').length %>)
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#approved">
+                Approved (<%= activities.filter(a => a.status === 'approved').length %>)
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#rejected">
+                Rejected (<%= activities.filter(a => a.status === 'rejected').length %>)
+            </a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Pending Activities -->
+        <div class="tab-pane fade show active" id="pending">
+            <div class="card">
+                <div class="card-body">
+                    <% const pendingActivities = activities.filter(a => a.status === 'pending'); %>
+                    <% if (pendingActivities.length === 0) { %>
+                        <p class="text-muted">No pending activities.</p>
+                    <% } else { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Activity</th>
+                                        <th>Date</th>
+                                        <th>Notes</th>
+                                        <th>Points</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% pendingActivities.forEach(activity => { %>
+                                        <tr>
+                                            <td>
+                                                <%= activity.first_name && activity.last_name 
+                                                    ? activity.first_name + ' ' + activity.last_name 
+                                                    : activity.email %>
+                                            </td>
+                                            <td><%= activity.activity_name %></td>
+                                            <td><%= new Date(activity.activity_date).toLocaleDateString() %></td>
+                                            <td><%= activity.notes || '-' %></td>
+                                            <td><span class="badge bg-info"><%= activity.default_points %> pts</span></td>
+                                            <td>
+                                                <form action="/admin/activities/approve/<%= activity.id %>" method="POST" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-success">
+                                                        <i class="bi bi-check"></i> Approve
+                                                    </button>
+                                                </form>
+                                                <form action="/admin/activities/reject/<%= activity.id %>" method="POST" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-danger">
+                                                        <i class="bi bi-x"></i> Reject
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approved Activities -->
+        <div class="tab-pane fade" id="approved">
+            <div class="card">
+                <div class="card-body">
+                    <% const approvedActivities = activities.filter(a => a.status === 'approved'); %>
+                    <% if (approvedActivities.length === 0) { %>
+                        <p class="text-muted">No approved activities.</p>
+                    <% } else { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Activity</th>
+                                        <th>Date</th>
+                                        <th>Notes</th>
+                                        <th>Points Awarded</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% approvedActivities.slice(0, 50).forEach(activity => { %>
+                                        <tr>
+                                            <td>
+                                                <%= activity.first_name && activity.last_name 
+                                                    ? activity.first_name + ' ' + activity.last_name 
+                                                    : activity.email %>
+                                            </td>
+                                            <td><%= activity.activity_name %></td>
+                                            <td><%= new Date(activity.activity_date).toLocaleDateString() %></td>
+                                            <td><%= activity.notes || '-' %></td>
+                                            <td><span class="badge bg-success"><%= activity.default_points %> pts</span></td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rejected Activities -->
+        <div class="tab-pane fade" id="rejected">
+            <div class="card">
+                <div class="card-body">
+                    <% const rejectedActivities = activities.filter(a => a.status === 'rejected'); %>
+                    <% if (rejectedActivities.length === 0) { %>
+                        <p class="text-muted">No rejected activities.</p>
+                    <% } else { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>User</th>
+                                        <th>Activity</th>
+                                        <th>Date</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% rejectedActivities.slice(0, 50).forEach(activity => { %>
+                                        <tr>
+                                            <td>
+                                                <%= activity.first_name && activity.last_name 
+                                                    ? activity.first_name + ' ' + activity.last_name 
+                                                    : activity.email %>
+                                            </td>
+                                            <td><%= activity.activity_name %></td>
+                                            <td><%= new Date(activity.activity_date).toLocaleDateString() %></td>
+                                            <td><%= activity.notes || '-' %></td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
