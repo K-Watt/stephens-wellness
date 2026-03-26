@@ -1,0 +1,48 @@
+
+
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-people"></i> Groups</h2>
+
+    <% if (groups.length === 0) { %>
+        <div class="text-center py-5">
+            <i class="bi bi-people" style="font-size: 4rem; color: #ccc;"></i>
+            <p class="text-muted mt-3">No groups available yet.</p>
+        </div>
+    <% } else { %>
+        <div class="row">
+            <% groups.forEach(group => { %>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= group.name %></h5>
+                            <p class="card-text"><%= group.description %></p>
+                            
+                            <div class="mb-3">
+                                <small class="text-muted">
+                                    <i class="bi bi-people"></i> <%= group.member_count %> members
+                                </small>
+                            </div>
+
+                            <% if (group.is_member > 0) { %>
+                                <a href="/groups/<%= group.id %>" class="btn btn-primary btn-sm w-100 mb-2">
+                                    <i class="bi bi-box-arrow-in-right"></i> View Group
+                                </a>
+                                <form action="/groups/leave/<%= group.id %>" method="POST">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                        <i class="bi bi-box-arrow-left"></i> Leave Group
+                                    </button>
+                                </form>
+                            <% } else { %>
+                                <form action="/groups/join/<%= group.id %>" method="POST">
+                                    <button type="submit" class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="bi bi-plus-circle"></i> Join Group
+                                    </button>
+                                </form>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    <% } %>
+</div>
