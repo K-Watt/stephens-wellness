@@ -1,0 +1,95 @@
+
+
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-person"></i> Profile</h2>
+
+    <div class="row">
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-circle" style="font-size: 6rem; color: #ccc;"></i>
+                    <h4 class="mt-3">
+                        <%= profile.first_name && profile.last_name 
+                            ? profile.first_name + ' ' + profile.last_name 
+                            : profile.email %>
+                    </h4>
+                    <p class="text-muted"><%= profile.email %></p>
+                    <div class="mt-3">
+                        <div class="d-flex justify-content-center align-items-center">
+                            <i class="bi bi-star-fill text-warning me-2"></i>
+                            <h3 class="mb-0"><%= totalPoints %></h3>
+                        </div>
+                        <p class="text-muted">Total Points</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Edit Profile</h5>
+                </div>
+                <div class="card-body">
+                    <form action="/profile/update" method="POST">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="first_name" class="form-label">First Name</label>
+                                <input type="text" class="form-control" id="first_name" name="first_name" 
+                                       value="<%= profile.first_name || '' %>" required>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="last_name" class="form-label">Last Name</label>
+                                <input type="text" class="form-control" id="last_name" name="last_name" 
+                                       value="<%= profile.last_name || '' %>" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="department" class="form-label">Department</label>
+                            <input type="text" class="form-control" id="department" name="department" 
+                                   value="<%= profile.department || '' %>">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="bio" class="form-label">Bio</label>
+                            <textarea class="form-control" id="bio" name="bio" rows="4"><%= profile.bio || '' %></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Update Profile
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Account Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Email</label>
+                        <p><%= profile.email %></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Role</label>
+                        <p class="text-capitalize">
+                            <%= profile.role %>
+                            <% if (profile.role === 'admin') { %>
+                                <span class="badge bg-primary">Admin</span>
+                            <% } %>
+                        </p>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="form-label fw-bold">Member Since</label>
+                        <p><%= new Date(profile.created_at).toLocaleDateString() %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
